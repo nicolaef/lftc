@@ -2,7 +2,6 @@ package com.xml;
 
 import java.io.IOException;
 
-import static com.xml.FileUtils.PrintErrorToFile;
 import static com.xml.FileUtils.PrintTo2Files;
 
 public class Main {
@@ -13,17 +12,12 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+        LexicalAnalyzer la = new LexicalAnalyzer();
+        la.analize("code.txt");
+        PrintTo2Files(la);
+        la.getPif().forEach(i -> System.out.println(i + " "));
+        la.getStList().forEach(System.out::println);
 
-//        try {
-            LexicalAnalyzer la = new LexicalAnalyzer();
-            la.analize("code.txt");
-            PrintTo2Files(la);
-            la.getPif().forEach(i -> System.out.println(i + " "));
-            la.getStList().forEach(System.out::println);
-//        } catch (RuntimeException e) {
-//            System.out.println(e.getMessage());
-//            PrintErrorToFile(e);
-//        }
     }
 
 

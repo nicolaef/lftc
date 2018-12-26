@@ -13,29 +13,29 @@ public class BinaryTree {
     public BinaryTree() {
     }
 
-    public BinaryTreeLeaf poz(String atom) {
+    public int poz(String atom) {
         if (root == null) {
             root = new BinaryTreeLeaf(null, null, atom, current, null);
-            return root;
+            return current;
         }
         return recPoz(root, atom);
     }
 
-    private BinaryTreeLeaf recPoz(BinaryTreeLeaf root, String atom) {
+    private int recPoz(BinaryTreeLeaf root, String atom) {
         if (root.getInfo().equals(atom)) {
-            return root;
+            return root.getId();
         }
         if (root.getInfo().compareTo(atom) < 0) {
             if (root.getLeft() != null)
                 return recPoz(root.getLeft(), atom);
             root.setLeft(new BinaryTreeLeaf(null, null, atom, current, root));
-            return root.getLeft();
+            return root.getLeft().getId();
         }
         if (root.getRight() != null) {
             return recPoz(root.getRight(), atom);
         }
         root.setRight(new BinaryTreeLeaf(null, null, atom, current, root));
-        return root.getRight();
+        return root.getRight().getId();
     }
 
     private List<BinaryTreeLeaf> middle(BinaryTreeLeaf l) {

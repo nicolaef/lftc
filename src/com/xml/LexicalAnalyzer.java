@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class LexicalAnalyzer {
     //parsing outputs
     private List<Pair<Integer, Integer>> pif = new ArrayList<>(); //program internal form
-    private List<Pair<Integer, BinaryTreeLeaf>> tempPif = new ArrayList<>();
     private BinaryTree st = new BinaryTree(); // symbol table
     private List<Pair<Integer, String>> stList = new ArrayList<>();
 
@@ -18,8 +17,6 @@ public class LexicalAnalyzer {
 
     //parsing helpers
     private String buffer = "";
-//    private int lastToken;
-//    private char sign = ' ';
 
     //location in code (for errors)
     private int line = 1;
@@ -41,24 +38,9 @@ public class LexicalAnalyzer {
         initializeExtra();
     }
 
-    private void addToTempPif(int key, BinaryTreeLeaf value){
-//        if (sign != ' ' && key >= 2) {
-//            tempPif.add(new Pair<>(codification.get("-"), null));
-//        }
-        buffer = "";
-        tempPif.add(new Pair<>(key, value));
-//        lastToken = key;
-//        sign = ' ';
-    }
-
     private void addToPif(int key, int value) {
-//        if (sign != ' ' && key >= 2) {
-//            pif.add(new Pair<>(codification.get("-"), -1));
-//        }
         buffer = "";
         pif.add(new Pair<>(key, value));
-//        lastToken = key;
-//        sign = ' ';
     }
 
     private void getCurrentToken() {
@@ -67,9 +49,9 @@ public class LexicalAnalyzer {
             if (codification.containsKey(buffer))
                 addToPif(codification.get(buffer), -1);
             else if (isConstant(buffer)) {
-                addToTempPif(1, st.poz(buffer));
+                addToPif(1, st.poz(buffer));
             } else if (isIdentifier(buffer)) {
-                addToTempPif(0, st.poz(buffer));
+                addToPif(0, st.poz(buffer));
             } else
                 throw new RuntimeException("Illegal identifier \"" + buffer + "\" at line " + line + " column " + (col - buffer.length()) + ".");
             buffer = "";
@@ -108,7 +90,7 @@ public class LexicalAnalyzer {
                 if (c2 != '\'')
                     throw new RuntimeException("Illegal constant character definition at line " + line + " and column " + (col));
                 if (inAlphabet(c1)) {
-                    addToTempPif(1, st.poz(c1.toString()));
+                    addToPif(1, st.poz(c1.toString()));
                     continue;
                 }
             }
@@ -131,7 +113,7 @@ public class LexicalAnalyzer {
     }
 
     private boolean isConstant(String s) {
-        return s.matches("^[+-]?[0-9]*$");
+        return s.matches("^[0-9]?$");
 
     }
 
