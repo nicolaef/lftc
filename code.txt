@@ -1,0 +1,10 @@
+int main(){
+    int ;
+    read(x);
+    x=-4;
+    write(x);
+    return x;
+    'l'
+    'l'
+    'k'
+}
