@@ -2,56 +2,27 @@ Program Type Struct Type1 ArrayDec TypeList Args ArgsList Cmptmt StmtList Stmt S
 9 10 12 13 2 3 26 25 14 15 11 17 4 5 16 27 6 8 7 19 18 19 17 18 17 20 17 21 22 23 24 epsilon
 Program
 Program->Type 9 Args CmpdStmt
-Type->SimpleType
-Type->ArrayDec
-Type->Struct
+Type->SimpleType|ArrayDec|Struct
 Struct->10 0 12 TypeList 13
-SimpleType->2
-SimpleType->3
+SimpleType->2|3
 Arraydec->Type 26 Number 25
-TypeList->Type
-TypeList->Type 27 TypeList
+TypeList->Type|Type 27 TypeList
 Args->14 ArgsList 15
-ArgsList->Type 0
-ArgsList->Type 0 ArgsList
-ArgsList->epsilon
+ArgsList->Type 0|Type 0 ArgsList|>epsilon
 CmpdStmt->12 StmtList 13
-StmtList->Stmt 16
-StmtList->Stmt 16 StmtList
-StmtList->epsilon
-Stmt->SimpleStmt
-Stmt->StructStmt
-SimpleStmt->AssignStmt
-SimpleStmt->IoStmt
-SimpleStmt->ReturnStmt
+StmtList->Stmt 16|Stmt 16 StmtList|epsilon
+Stmt->SimpleStmt|StructStmt
+SimpleStmt->AssignStmt|IoStmt|ReturnStmt
 ReturnStmt->11 Expression
 AssignStmt->0 17 Identifier
-Expression->Term
-Expression->Term Operator Expression
-Term->0
-Term->Number
-Term->Expression
-Term->14 Term 15
-IoStmt->4 14 Identifier 15
-IoStmt->5 14 Identifier 15
-StructStmt->CmpdStmt
-StructStmt->IfStmt
-StructStmt->WhileStmt
-IfStmt->6 14 Condition 15 CodeBlock
-IfStmt->6 14 Condition 15 CodeBlock 8 CodeBlock
-CodeBlock->CmpdStmt
-CodeBlock->Stmt
+Expression->Term|Term Operator Expression
+Term->0|Number|Expression|14 Term 15
+IoStmt->4 14 Identifier 15|5 14 Identifier 15
+StructStmt->CmpdStmt|IfStmt|WhileStmt
+IfStmt->6 14 Condition 15 CodeBlock|6 14 Condition 15 CodeBlock 8 CodeBlock
+CodeBlock->CmpdStmt|Stmt
 WhileStmt->7 14 Condition 15 CodeBlock
 Condition->Expression Relation Expression
-Relation->19
-Relation->19 17
-Relation->17
-Relation->20 17
-Relation->18 17
-Relation->18
-Operator->21
-Operator->22
-Operator->23
-Operator->24
-Identifier->0
-Identifier->1
+Relation->19|19 17|17|>20 17|18 17|18
+Operator->21|22|23|24
+Identifier->0|1
