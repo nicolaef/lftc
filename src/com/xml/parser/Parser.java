@@ -20,7 +20,7 @@ public class Parser {
         // NODE: this is currently destructive (changes the current grammar instead of creating a new one) - might be cause of bugs
         NonTerminal nt = grammar.getStartingSymbol();
         List<Production> productions = Collections.singletonList(new Production(Collections.singletonList(nt)));
-        NonTerminal newStart = new NonTerminal("extendedStart", productions);
+        NonTerminal newStart = new NonTerminal("S'", productions);
         grammar.addNonTerminal(newStart);
         grammar.setStartingSymbol(newStart.getName());
     }
@@ -30,6 +30,9 @@ public class Parser {
         extendGrammar();
 
         List<State> states = colCan();
+        for (State state : states){
+            System.out.println(state);
+        }
     }
 
     private State closure(ProductionIterator elem) {
@@ -40,11 +43,12 @@ public class Parser {
             ProductionIterator prod = result.get(i);
             Element e = prod.getNext();
             if (e instanceof NonTerminal) {
-                List<Production> productions = grammar.getProductions((NonTerminal) e);
+                NonTerminal nonTerminal = (NonTerminal) e;
+                List<Production> productions = grammar.getProductions(nonTerminal);
 
                 List<ProductionIterator> iterators = productions
                         .stream()
-                        .map(ProductionIterator::new)
+                        .map(pi -> new ProductionIterator(pi, nonTerminal ))
                         .collect(Collectors.toList());
                 iterators.removeAll(result);
                 if (iterators.size() != 0) {
@@ -74,12 +78,14 @@ public class Parser {
         List<State> result = new ArrayList<>();
         State s0 = closure(
                 new ProductionIterator(
-                        grammar.getStartingSymbol().getProductions().get(0)
+                        grammar.getStartingSymbol().getProductions().get(0),
+                        grammar.getStartingSymbol()
                 )
         );
-        boolean modified = false;
+        boolean modified;
         result.add(s0);
         do {
+            modified = false;
             for (int i = 0; i < result.size(); i++) {
                 State state = result.get(i);
                 for (Element element : grammar.getAllElements()) {
@@ -87,8 +93,6 @@ public class Parser {
                     if (gotoResult != null && !result.contains(gotoResult)) {
                         result.add(gotoResult);
                         modified = true;
-                    } else {
-                        modified = false;
                     }
                 }
             }

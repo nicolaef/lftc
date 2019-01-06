@@ -11,6 +11,10 @@ import java.util.*;
 
 public class Grammar {
 
+    Map<String, NonTerminal> nonTerminals = new HashMap<>();
+    Map<Integer, Terminal> terminals = new HashMap<>();
+    String startingSymbol;
+
     public Grammar() throws FileNotFoundException {
         readGrammarFromFile("grammar.2txt");
     }
@@ -27,10 +31,6 @@ public class Grammar {
         this.startingSymbol = startingSymbol;
     }
 
-    Map<String, NonTerminal> nonTerminals = new HashMap<>();
-    Map<Integer, Terminal> terminals = new HashMap<>();
-    String startingSymbol;
-
     public NonTerminal getNonTerminalByName(String name) {
         return nonTerminals.get(name);
     }
@@ -40,8 +40,8 @@ public class Grammar {
     }
 
     public List<Element> getAllElements(){
-        List<Element> result = new ArrayList<>(terminals.values());
-        result.addAll(nonTerminals.values());
+        List<Element> result = new ArrayList<>(nonTerminals.values());
+        result.addAll(terminals.values());
         return result;
     }
 

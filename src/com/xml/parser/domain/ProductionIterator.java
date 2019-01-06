@@ -12,6 +12,7 @@ import java.util.Objects;
 public class ProductionIterator {
     private Production production;
     private Integer location;
+    private NonTerminal nonTerminal;
 
     public Production getProduction() {
         return production;
@@ -20,10 +21,12 @@ public class ProductionIterator {
     public ProductionIterator(ProductionIterator old) {
         production = old.production;
         location = old.location;
+        nonTerminal = old.nonTerminal;
     }
 
-    public ProductionIterator(Production production) {
+    public ProductionIterator(Production production, NonTerminal nonTerminal) {
         this.production = production;
+        this.nonTerminal = nonTerminal;
         location = 0;
     }
 
@@ -70,6 +73,9 @@ public class ProductionIterator {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
+        sb.append(nonTerminal.getName()).append("->");
+
         int i;
         for (i = 0; i<production.getElements().size(); i++){
             if (i == location){

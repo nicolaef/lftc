@@ -31,4 +31,15 @@ public class State {
 
         return Objects.hash(productionIterators);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (ProductionIterator pi: productionIterators) {
+            sb.append("[").append(pi.toString()).append("], ");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }
