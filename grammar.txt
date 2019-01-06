@@ -1,11 +1,11 @@
-Program Type SimpleType Struct Type1 ArrayDec TypeList Args ArgsList CmpdStmt StmtList Stmt SimpleStmt ReturnStmt AssignStmt Expression Term IoStmt StructStmt IfStmt CodeBlock WhileStmt Condition LetterOrDigits Number Non0Digit Digit Letter Relation Operator Identifier
+Program Type SimpleType Struct Type1 ArrayDec TypeList Args ArgsList CmpdStmt StmtList Stmt SimpleStmt ReturnStmt AssignStmt Expression Term IoStmt StructStmt IfStmt CodeBlock WhileStmt Condition LetterOrDigits Non0Digit Digit Letter Relation Operator Identifier
 9 10 12 13 2 3 26 25 14 15 11 17 4 5 16 27 6 8 7 19 18 19 17 18 17 20 17 21 22 23 24 -1
 Program
 Program->Type 9 Args CmpdStmt
 Type->SimpleType|ArrayDec|Struct
 Struct->10 0 12 TypeList 13
 SimpleType->2|3
-ArrayDec->Type 26 Number 25
+ArrayDec->Type 26 Identifier 25
 TypeList->Type|Type 27 TypeList
 Args->14 ArgsList 15
 ArgsList->Type 0|Type 0 ArgsList|>-1
@@ -16,7 +16,7 @@ SimpleStmt->AssignStmt|IoStmt|ReturnStmt
 ReturnStmt->11 Expression
 AssignStmt->0 17 Identifier
 Expression->Term|Term Operator Expression
-Term->0|Number|Expression|14 Term 15
+Term->0|Identifier|Expression|14 Term 15
 IoStmt->4 14 Identifier 15|5 14 Identifier 15
 StructStmt->CmpdStmt|IfStmt|WhileStmt
 IfStmt->6 14 Condition 15 CodeBlock|6 14 Condition 15 CodeBlock 8 CodeBlock
