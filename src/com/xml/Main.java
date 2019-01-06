@@ -1,5 +1,7 @@
 package com.xml;
 
+import com.xml.grammar.Grammar;
+
 import java.io.IOException;
 
 import static com.xml.FileUtils.PrintTo2Files;
@@ -17,7 +19,7 @@ public class Main {
         PrintTo2Files(la);
         la.getPif().forEach(i -> System.out.println(i + " "));
         la.getStList().forEach(System.out::println);
-
+        Grammar g = new Grammar();
     }
 
 
