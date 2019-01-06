@@ -1,6 +1,7 @@
 package com.xml.grammar.domain;
 
 import java.util.List;
+import java.util.Objects;
 
 public class NonTerminal implements Element {
     private String name;
@@ -33,4 +34,21 @@ public class NonTerminal implements Element {
     public void setProductions(List<Production> productions) {
         this.productions = productions;
     }
+
+    @Override
+    public String toString() {
+        return "NonTerminal{" +
+                "name='" + name + '\'' +
+                ", productions=" + productions +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NonTerminal that = (NonTerminal) o;
+        return Objects.equals(name, that.name);
+    }
+
 }

@@ -5,19 +5,25 @@ import com.xml.grammar.domain.NonTerminal;
 import com.xml.grammar.domain.Production;
 import com.xml.grammar.domain.Terminal;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Grammar {
-    public Grammar() {
+    public Grammar() throws FileNotFoundException {
         readGrammarFromFile("grammar.txt");
     }
 
-    Map<String, NonTerminal> nonTerminals;
-    Map<Integer, Terminal> terminals;
+    Map<String, NonTerminal> nonTerminals = new HashMap<>();
+    Map<Integer, Terminal> terminals = new HashMap<>();
     String startingSymbol;
 
-    private void readGrammarFromFile(String filename) {
-        Scanner scanner = new Scanner(filename);
+    public List<Production> getProductions(NonTerminal nonTerminal){
+        return nonTerminals.get(nonTerminal.getName()).getProductions();
+    }
+
+    private void readGrammarFromFile(String filename) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(filename));
         String nonTerminalsString = scanner.nextLine();
         Arrays.stream(nonTerminalsString.split(" ")).forEach(i -> nonTerminals.put(i, new NonTerminal(i)));
 
@@ -31,7 +37,6 @@ public class Grammar {
             NonTerminal nonTerminal = nonTerminals.get(nameAndProductions.get(0));
             nonTerminal.setProductions(productionsFromString(nameAndProductions.get(1)));
         }
-        System.out.println("WOOOOOOOOOOOO");
     }
 
     private List<Production> productionsFromString(String production) {
