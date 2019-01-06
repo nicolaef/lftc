@@ -1,13 +1,35 @@
 package com.xml.parser.domain;
 
+import com.xml.grammar.domain.NonTerminal;
+import com.xml.parser.domain.actions.Shift;
+
 import java.util.List;
 import java.util.Objects;
 
 public class State {
     private List<ProductionIterator> productionIterators;
+    private NonTerminal nonTerminal;
+    private int id;
 
-    public State(List<ProductionIterator> productionIterators) {
+    public NonTerminal getNonTerminal() {
+        return nonTerminal;
+    }
+
+    public void setNonTerminal(NonTerminal nonTerminal) {
+        this.nonTerminal = nonTerminal;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public State(List<ProductionIterator> productionIterators, NonTerminal nonTerminal) {
         this.productionIterators = productionIterators;
+        this.nonTerminal = nonTerminal;
     }
 
     public List<ProductionIterator> getProductionIterators() {
@@ -35,7 +57,7 @@ public class State {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append(id).append("->").append("{");
         for (ProductionIterator pi: productionIterators) {
             sb.append("[").append(pi.toString()).append("], ");
         }

@@ -14,6 +14,14 @@ public class ProductionIterator {
     private Integer location;
     private NonTerminal nonTerminal;
 
+    public NonTerminal getNonTerminal() {
+        return nonTerminal;
+    }
+
+    public void setNonTerminal(NonTerminal nonTerminal) {
+        this.nonTerminal = nonTerminal;
+    }
+
     public Production getProduction() {
         return production;
     }

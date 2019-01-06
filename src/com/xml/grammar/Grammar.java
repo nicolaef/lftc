@@ -11,12 +11,18 @@ import java.util.*;
 
 public class Grammar {
 
-    Map<String, NonTerminal> nonTerminals = new HashMap<>();
-    Map<Integer, Terminal> terminals = new HashMap<>();
-    String startingSymbol;
+    private Map<String, NonTerminal> nonTerminals = new HashMap<>();
+    private Map<Integer, Terminal> terminals = new HashMap<>();
+    private String startingSymbol;
 
-    public Grammar() throws FileNotFoundException {
-        readGrammarFromFile("grammar.2txt");
+    public Grammar(String filename) throws FileNotFoundException {
+        readGrammarFromFile(filename);
+    }
+
+    public Grammar(Grammar g) {
+        nonTerminals = new HashMap<>(g.nonTerminals);
+        terminals = new HashMap<>(g.terminals);
+        startingSymbol = g.startingSymbol;
     }
 
     public NonTerminal getStartingSymbol(){

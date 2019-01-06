@@ -4,8 +4,11 @@ import com.xml.grammar.Grammar;
 import com.xml.grammar.domain.Element;
 import com.xml.grammar.domain.NonTerminal;
 import com.xml.grammar.domain.Production;
-import com.xml.parser.domain.ProductionIterator;
-import com.xml.parser.domain.State;
+import com.xml.parser.domain.*;
+import com.xml.parser.domain.actions.Acceptance;
+import com.xml.parser.domain.actions.Error;
+import com.xml.parser.domain.actions.Reduction;
+import com.xml.parser.domain.actions.Shift;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,25 +17,66 @@ import java.util.stream.Collectors;
 
 public class Parser {
 
+    private Grammar extendedGrammar;
+
     private Grammar grammar;
 
     private void extendGrammar() {
-        // NODE: this is currently destructive (changes the current grammar instead of creating a new one) - might be cause of bugs
-        NonTerminal nt = grammar.getStartingSymbol();
+        extendedGrammar = new Grammar(grammar);
+
+        NonTerminal nt = extendedGrammar.getStartingSymbol();
         List<Production> productions = Collections.singletonList(new Production(Collections.singletonList(nt)));
         NonTerminal newStart = new NonTerminal("S'", productions);
-        grammar.addNonTerminal(newStart);
-        grammar.setStartingSymbol(newStart.getName());
+
+        extendedGrammar.addNonTerminal(newStart);
+        extendedGrammar.setStartingSymbol(newStart.getName());
+    }
+
+    private Action getAction(State state){
+        for (ProductionIterator iterator: state.getProductionIterators()){
+            if (iterator.getNext()!=null){
+                return new Shift();
+            }
+            Production p = iterator.getProduction();
+            for (NonTerminal nonTerminal : grammar.getNonTerminals()){
+                if (nonTerminal.getProductions().contains(p))
+                    //TODO: replace this with the id of the production, also add ids to productions
+                    return new Reduction(state.getId());
+            }
+            if (state.getNonTerminal().getName().equals("S'") &&
+                    state.getProductionIterators().size() == 1 &&
+                    state.getProductionIterators().get(0).getNonTerminal().equals(grammar.getStartingSymbol())){
+                return new Acceptance();
+            }
+            return new Error();
+        }
+        return new Error();
     }
 
     public Parser(Grammar g) {
         grammar = g;
         extendGrammar();
 
+        AnalysisTable analysisTable = new AnalysisTable();
+
         List<State> states = colCan();
-        for (State state : states){
-            System.out.println(state);
+        for (int i = 0; i<states.size(); i++){
+            State state = states.get(i);
+            state.setId(i);
+
+            AnalysisTableRow tableRow = new AnalysisTableRow();
+            tableRow.setState(state);
+            tableRow.setAction(getAction(state));
+            System.out.println(state.toString());
+            for (Element elem : grammar.getAllElements()){
+                State goTo = goTo(state,elem);
+                if (goTo != null){
+                    tableRow.getGotoList().put(elem,goTo);
+                }
+            }
+            analysisTable.addTableRow(tableRow);
         }
+        System.out.println("WOOOOOOOOOOO");
     }
 
     private State closure(ProductionIterator elem) {
@@ -44,7 +88,7 @@ public class Parser {
             Element e = prod.getNext();
             if (e instanceof NonTerminal) {
                 NonTerminal nonTerminal = (NonTerminal) e;
-                List<Production> productions = grammar.getProductions(nonTerminal);
+                List<Production> productions = extendedGrammar.getProductions(nonTerminal);
 
                 List<ProductionIterator> iterators = productions
                         .stream()
@@ -56,7 +100,7 @@ public class Parser {
                 }
             }
         }
-        return new State(result);
+        return new State(result,elem.getNonTerminal());
     }
 
     private State goTo(State s, Element element) {
@@ -78,8 +122,8 @@ public class Parser {
         List<State> result = new ArrayList<>();
         State s0 = closure(
                 new ProductionIterator(
-                        grammar.getStartingSymbol().getProductions().get(0),
-                        grammar.getStartingSymbol()
+                        extendedGrammar.getStartingSymbol().getProductions().get(0),
+                        extendedGrammar.getStartingSymbol()
                 )
         );
         boolean modified;
@@ -88,7 +132,7 @@ public class Parser {
             modified = false;
             for (int i = 0; i < result.size(); i++) {
                 State state = result.get(i);
-                for (Element element : grammar.getAllElements()) {
+                for (Element element : extendedGrammar.getAllElements()) {
                     State gotoResult = goTo(state, element);
                     if (gotoResult != null && !result.contains(gotoResult)) {
                         result.add(gotoResult);

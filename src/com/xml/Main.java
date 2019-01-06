@@ -20,7 +20,7 @@ public class Main {
         PrintTo2Files(la);
         la.getPif().forEach(i -> System.out.println(i + " "));
         la.getStList().forEach(System.out::println);
-        Grammar g = new Grammar();
+        Grammar g = new Grammar("grammar.2txt");
         Parser p = new Parser(g);
     }
 
