@@ -1,8 +1,11 @@
 package com.xml.parser.domain;
 
 import com.xml.grammar.domain.Element;
+import com.xml.grammar.domain.NonTerminal;
 import com.xml.grammar.domain.Production;
+import com.xml.grammar.domain.Terminal;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,5 +54,23 @@ public class ProductionIterator {
         ProductionIterator that = (ProductionIterator) o;
         return Objects.equals(production, that.production) &&
                 Objects.equals(location, that.location);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i<production.getElements().size(); i++){
+            if (i == location){
+                sb.append(". ");
+            }
+            Element e = production.getElements().get(i);
+            if (e instanceof NonTerminal){
+                sb.append(((NonTerminal) e).getName());
+            } else {
+                sb.append(((Terminal) e).getId());
+            }
+            sb.append(" ");
+        }
+        return  sb.toString();
     }
 }

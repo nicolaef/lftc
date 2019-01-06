@@ -22,6 +22,20 @@ public class Grammar {
         return nonTerminals.get(nonTerminal.getName()).getProductions();
     }
 
+    public List<Element> getAllElements(){
+        List<Element> result = new ArrayList<>(terminals.values());
+        result.addAll(nonTerminals.values());
+        return result;
+    }
+
+    public List<NonTerminal> getNonTerminals(){
+        return new ArrayList<>(nonTerminals.values());
+    }
+
+    public List<Terminal>  getTerminals(){
+        return new ArrayList<>(terminals.values());
+    }
+
     private void readGrammarFromFile(String filename) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(filename));
         String nonTerminalsString = scanner.nextLine();

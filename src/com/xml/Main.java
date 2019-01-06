@@ -1,6 +1,7 @@
 package com.xml;
 
 import com.xml.grammar.Grammar;
+import com.xml.parser.Parser;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ public class Main {
         la.getPif().forEach(i -> System.out.println(i + " "));
         la.getStList().forEach(System.out::println);
         Grammar g = new Grammar();
+        Parser p = new Parser(g);
     }
 
 

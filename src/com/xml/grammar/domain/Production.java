@@ -23,7 +23,16 @@ public class Production {
 
     @Override
     public String toString() {
-        return  elements.toString();
+        StringBuilder sb = new StringBuilder();
+        for (Element e:elements){
+            if (e instanceof NonTerminal){
+                sb.append(((NonTerminal) e).getName());
+            } else {
+                sb.append(((Terminal) e).getId());
+            }
+            sb.append(" ");
+        }
+        return  sb.toString();
     }
 
     @Override
