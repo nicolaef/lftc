@@ -10,13 +10,30 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Grammar {
+
     public Grammar() throws FileNotFoundException {
-        readGrammarFromFile("grammar.txt");
+        readGrammarFromFile("grammar.2txt");
+    }
+
+    public NonTerminal getStartingSymbol(){
+        return nonTerminals.get(startingSymbol);
+    }
+
+    public void addNonTerminal(NonTerminal nt){
+        nonTerminals.put(nt.getName(),nt);
+    }
+
+    public void setStartingSymbol(String startingSymbol) {
+        this.startingSymbol = startingSymbol;
     }
 
     Map<String, NonTerminal> nonTerminals = new HashMap<>();
     Map<Integer, Terminal> terminals = new HashMap<>();
     String startingSymbol;
+
+    public NonTerminal getNonTerminalByName(String name) {
+        return nonTerminals.get(name);
+    }
 
     public List<Production> getProductions(NonTerminal nonTerminal){
         return nonTerminals.get(nonTerminal.getName()).getProductions();
@@ -37,6 +54,10 @@ public class Grammar {
     }
 
     private void readGrammarFromFile(String filename) throws FileNotFoundException {
+        //FIRST SET EPSILON
+        nonTerminals.put("Epsilon", new NonTerminal("Epsilon", new ArrayList<>()));
+
+
         Scanner scanner = new Scanner(new File(filename));
         String nonTerminalsString = scanner.nextLine();
         Arrays.stream(nonTerminalsString.split(" ")).forEach(i -> nonTerminals.put(i, new NonTerminal(i)));

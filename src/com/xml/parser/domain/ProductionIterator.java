@@ -33,6 +33,9 @@ public class ProductionIterator {
     }
 
     public Element getNext(){
+        if (location >= production.getElements().size()) {
+            return null;
+        }
         return production.getElements().get(location);
     }
     //return null or raise exception????
@@ -67,7 +70,8 @@ public class ProductionIterator {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i<production.getElements().size(); i++){
+        int i;
+        for (i = 0; i<production.getElements().size(); i++){
             if (i == location){
                 sb.append(". ");
             }
@@ -79,6 +83,8 @@ public class ProductionIterator {
             }
             sb.append(" ");
         }
+        if (i == location)
+            sb.append(".");
         return  sb.toString();
     }
 }
