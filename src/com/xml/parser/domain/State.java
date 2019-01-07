@@ -9,7 +9,13 @@ import java.util.Objects;
 public class State {
     private List<ProductionIterator> productionIterators;
     private NonTerminal nonTerminal;
-    private int id;
+    private Integer id;
+
+    public State() {
+        this.id = index++;
+    }
+
+    private static int index;
 
     public NonTerminal getNonTerminal() {
         return nonTerminal;
@@ -19,17 +25,18 @@ public class State {
         this.nonTerminal = nonTerminal;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     public State(List<ProductionIterator> productionIterators, NonTerminal nonTerminal) {
         this.productionIterators = productionIterators;
         this.nonTerminal = nonTerminal;
+        this.id = index++;
     }
 
     public List<ProductionIterator> getProductionIterators() {

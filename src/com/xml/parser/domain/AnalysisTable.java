@@ -27,12 +27,11 @@ public class AnalysisTable {
         return null;
     }
 
-    public Action getAction(State s) {
-        for (AnalysisTableRow tableRow : table) {
-            if (tableRow.getState().equals(s)){
-                return tableRow.getAction();
-            }
-        }
-        return null;
+    public List<AnalysisTableRow> getTable() {
+        return table;
+    }
+
+    public void setTable(List<AnalysisTableRow> table) {
+        this.table = table;
     }
 }

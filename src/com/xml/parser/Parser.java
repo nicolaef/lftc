@@ -1,18 +1,16 @@
 package com.xml.parser;
 
 import com.xml.grammar.Grammar;
-import com.xml.grammar.domain.Element;
-import com.xml.grammar.domain.NonTerminal;
-import com.xml.grammar.domain.Production;
+import com.xml.grammar.domain.*;
+import com.xml.grammar.domain.Number;
 import com.xml.parser.domain.*;
 import com.xml.parser.domain.actions.Acceptance;
 import com.xml.parser.domain.actions.Error;
 import com.xml.parser.domain.actions.Reduction;
 import com.xml.parser.domain.actions.Shift;
+import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Parser {
@@ -20,6 +18,10 @@ public class Parser {
     private Grammar extendedGrammar;
 
     private Grammar grammar;
+
+    private AnalysisTable analysisTable;
+
+    private Map<Pair<Element, State>, State> gotoMap = new HashMap<>();
 
     private void extendGrammar() {
         extendedGrammar = new Grammar(grammar);
@@ -32,20 +34,24 @@ public class Parser {
         extendedGrammar.setStartingSymbol(newStart.getName());
     }
 
-    private Action getAction(State state){
-        for (ProductionIterator iterator: state.getProductionIterators()){
-            if (iterator.getNext()!=null){
+    private Action getAction(State state) {
+        for (ProductionIterator iterator : state.getProductionIterators()) {
+            if (iterator.getNext() != null) {
                 return new Shift();
             }
             Production p = iterator.getProduction();
-            for (NonTerminal nonTerminal : grammar.getNonTerminals()){
-                if (nonTerminal.getProductions().contains(p))
-                    //TODO: replace this with the id of the production, also add ids to productions
-                    return new Reduction(state.getId());
+            for (NonTerminal nonTerminal : grammar.getNonTerminals()) {
+                List<Production> productions = nonTerminal
+                        .getProductions()
+                        .stream()
+                        .filter(i -> i.equals(p))
+                        .collect(Collectors.toList());
+                if (productions.size() == 1)
+                    return new Reduction(productions.get(0).getId());
             }
             if (state.getNonTerminal().getName().equals("S'") &&
                     state.getProductionIterators().size() == 1 &&
-                    state.getProductionIterators().get(0).getNonTerminal().equals(grammar.getStartingSymbol())){
+                    state.getProductionIterators().get(0).getProduction().getElements().get(0).equals(grammar.getStartingSymbol())) {
                 return new Acceptance();
             }
             return new Error();
@@ -53,30 +59,90 @@ public class Parser {
         return new Error();
     }
 
-    public Parser(Grammar g) {
-        grammar = g;
-        extendGrammar();
-
-        AnalysisTable analysisTable = new AnalysisTable();
+    private void populateAnalysisTable() {
+        analysisTable = new AnalysisTable();
 
         List<State> states = colCan();
-        for (int i = 0; i<states.size(); i++){
+        int i;
+        for (i = 0; i < states.size(); i++) {
             State state = states.get(i);
-            state.setId(i);
-
             AnalysisTableRow tableRow = new AnalysisTableRow();
             tableRow.setState(state);
             tableRow.setAction(getAction(state));
             System.out.println(state.toString());
-            for (Element elem : grammar.getAllElements()){
-                State goTo = goTo(state,elem);
-                if (goTo != null){
-                    tableRow.getGotoList().put(elem,goTo);
+            for (Element elem : grammar.getAllElements()) {
+                State goTo = goTo(state, elem);
+                if (goTo != null) {
+                    List<State> states2 = states.stream().filter(p->p.equals(goTo)).collect(Collectors.toList());
+                    if (states2.size() == 0)
+                        tableRow.getGotoList().put(elem, goTo);
+                    else
+                        tableRow.getGotoList().put(elem,states2.get(0));
                 }
             }
             analysisTable.addTableRow(tableRow);
         }
-        System.out.println("WOOOOOOOOOOO");
+    }
+
+    private List<Integer> syntacticAnalysis(List<Element> input) {
+        Map<Integer, Production> productionMap = grammar.getProductionsMap();
+        Integer state = 0;
+        Stack<Element> alpha = new Stack<>();
+        alpha.push(new NonTerminal("END"));
+        alpha.push(new Number(0));
+        Stack<Element> beta = new Stack<>();
+        for (int i=input.size()-1; i >= 0; i--) {
+            beta.push(input.get(i));
+        }
+
+        Stack<Integer> phi = new Stack<>();
+        boolean end = false;
+
+        do {
+            AnalysisTableRow row = analysisTable.getTable().get(state);
+            Action action = row.getAction();
+            if (action instanceof Shift) {
+                Element temp = beta.pop();
+                state = row.getGotoList().get(temp).getId();
+                alpha.push(temp);
+                alpha.push(new Number(state));
+            } else if (action instanceof Reduction) {
+                Reduction reduction = (Reduction) action;
+                Production prod = productionMap.get(reduction.getProduction());
+                for (Element e : prod.getElements()) {
+                    alpha.pop();
+                    alpha.pop();
+                }
+                int num = ((Number) alpha.peek()).getNumber();
+                state = analysisTable.getTable().get(num).getGotoList().get(prod.getLhs()).getId();
+                alpha.push(prod.getLhs());
+                alpha.push(new Number(state));
+                phi.push(reduction.getProduction());
+            } else if (action instanceof Acceptance) {
+                System.out.println("SUCCESS");
+                end = true;
+            } else {
+                System.out.println("ERROR");
+                end = true;
+            }
+        } while (!end);
+        return phi;
+    }
+
+    public Parser(Grammar g) {
+        grammar = g;
+        extendGrammar();
+        populateAnalysisTable();
+
+        List<Element> elements = new ArrayList<>();
+        elements.add(new Terminal(2));
+        elements.add(new Terminal(3));
+        elements.add(new Terminal(3));
+        elements.add(new Terminal(3));
+        elements.add(new Terminal(3));
+        elements.add(new Terminal(4));
+        syntacticAnalysis(elements);
+
     }
 
     private State closure(ProductionIterator elem) {
@@ -92,7 +158,7 @@ public class Parser {
 
                 List<ProductionIterator> iterators = productions
                         .stream()
-                        .map(pi -> new ProductionIterator(pi, nonTerminal ))
+                        .map(pi -> new ProductionIterator(pi, nonTerminal))
                         .collect(Collectors.toList());
                 iterators.removeAll(result);
                 if (iterators.size() != 0) {
@@ -100,10 +166,13 @@ public class Parser {
                 }
             }
         }
-        return new State(result,elem.getNonTerminal());
+        return new State(result, elem.getNonTerminal());
     }
 
     private State goTo(State s, Element element) {
+        if (gotoMap.get(new Pair<>(element, s)) != null) {
+            return gotoMap.get(new Pair<>(element, s));
+        }
         List<ProductionIterator> iterators = s
                 .getProductionIterators()
                 .stream()
@@ -115,7 +184,9 @@ public class Parser {
         } else if (iterators.size() == 0) {
             return null;
         }
-        return closure(iterators.get(0).goNext());
+        State result = closure(iterators.get(0).goNext());
+        gotoMap.put(new Pair<>(element, s), result);
+        return result;
     }
 
     private List<State> colCan() {

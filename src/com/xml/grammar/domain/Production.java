@@ -6,11 +6,35 @@ import java.util.Objects;
 public class Production {
     private List<Element> elements;
 
+    private NonTerminal lhs;
+
+    public NonTerminal getLhs() {
+        return lhs;
+    }
+
+    public void setLhs(NonTerminal lhs) {
+        this.lhs = lhs;
+    }
+
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private static int index = 0;
+
     public Production() {
+        id = index++;
     }
 
     public Production(List<Element> elements) {
         this.elements = elements;
+        this.id = index++;
     }
 
     public List<Element> getElements() {

@@ -25,12 +25,12 @@ public class Grammar {
         startingSymbol = g.startingSymbol;
     }
 
-    public NonTerminal getStartingSymbol(){
+    public NonTerminal getStartingSymbol() {
         return nonTerminals.get(startingSymbol);
     }
 
-    public void addNonTerminal(NonTerminal nt){
-        nonTerminals.put(nt.getName(),nt);
+    public void addNonTerminal(NonTerminal nt) {
+        nonTerminals.put(nt.getName(), nt);
     }
 
     public void setStartingSymbol(String startingSymbol) {
@@ -41,21 +41,33 @@ public class Grammar {
         return nonTerminals.get(name);
     }
 
-    public List<Production> getProductions(NonTerminal nonTerminal){
+    public List<Production> getProductions(NonTerminal nonTerminal) {
         return nonTerminals.get(nonTerminal.getName()).getProductions();
     }
 
-    public List<Element> getAllElements(){
+    public Map<Integer, Production> getProductionsMap() {
+        List<Production> productions = new ArrayList<>();
+        nonTerminals.values().forEach(
+                i -> {
+                    i.getProductions().forEach(k->k.setLhs(i));
+                    productions.addAll(i.getProductions());
+                });
+        Map<Integer, Production> result = new HashMap<>();
+        productions.forEach(i -> result.put(i.getId(), i));
+        return result;
+    }
+
+    public List<Element> getAllElements() {
         List<Element> result = new ArrayList<>(nonTerminals.values());
         result.addAll(terminals.values());
         return result;
     }
 
-    public List<NonTerminal> getNonTerminals(){
+    public List<NonTerminal> getNonTerminals() {
         return new ArrayList<>(nonTerminals.values());
     }
 
-    public List<Terminal>  getTerminals(){
+    public List<Terminal> getTerminals() {
         return new ArrayList<>(terminals.values());
     }
 
@@ -86,7 +98,7 @@ public class Grammar {
         for (String prod : productions) {
             List<String> elems = Arrays.asList(prod.split(" "));
             List<Element> resultPart = new ArrayList<>();
-            for (String elem: elems) {
+            for (String elem : elems) {
                 if (elem.matches("[0-9]*")) {
                     resultPart.add(new Terminal(Integer.parseInt(elem)));
                 } else {
