@@ -84,7 +84,7 @@ public class Parser {
         }
     }
 
-    private List<Integer> syntacticAnalysis(List<Element> input) {
+    public List<Integer> syntacticAnalysis(List<Element> input) {
         Map<Integer, Production> productionMap = grammar.getProductionsMap();
         Integer state = 0;
         Stack<Element> alpha = new Stack<>();
@@ -99,7 +99,14 @@ public class Parser {
         boolean end = false;
 
         do {
-            AnalysisTableRow row = analysisTable.getTable().get(state);
+            final int finalState = state;
+            AnalysisTableRow row = analysisTable
+                    .getTable()
+                    .stream()
+                    .filter(i-> i.getState().getId() == finalState)
+                    .collect(Collectors.toList())
+                    .get(0);
+
             Action action = row.getAction();
             if (action instanceof Shift) {
                 Element temp = beta.pop();
@@ -114,7 +121,15 @@ public class Parser {
                     alpha.pop();
                 }
                 int num = ((Number) alpha.peek()).getNumber();
-                state = analysisTable.getTable().get(num).getGotoList().get(prod.getLhs()).getId();
+                state = analysisTable
+                        .getTable()
+                        .stream()
+                        .filter(i-> i.getState().getId() == num)
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getGotoList()
+                        .get(prod.getLhs())
+                        .getId();
                 alpha.push(prod.getLhs());
                 alpha.push(new Number(state));
                 phi.push(reduction.getProduction());
@@ -134,14 +149,6 @@ public class Parser {
         extendGrammar();
         populateAnalysisTable();
 
-        List<Element> elements = new ArrayList<>();
-        elements.add(new Terminal(2));
-        elements.add(new Terminal(3));
-        elements.add(new Terminal(3));
-        elements.add(new Terminal(3));
-        elements.add(new Terminal(3));
-        elements.add(new Terminal(4));
-        syntacticAnalysis(elements);
 
     }
 
@@ -180,6 +187,7 @@ public class Parser {
                 .map(ProductionIterator::new)
                 .collect(Collectors.toList());
         if (iterators.size() > 1) {
+            iterators.forEach(System.out::println);
             throw new RuntimeException("INCOMPATIBLE GRAMMAR");
         } else if (iterators.size() == 0) {
             return null;

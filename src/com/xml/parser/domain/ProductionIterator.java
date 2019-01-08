@@ -92,7 +92,7 @@ public class ProductionIterator {
             Element e = production.getElements().get(i);
             if (e instanceof NonTerminal){
                 sb.append(((NonTerminal) e).getName());
-            } else {
+            } else if (e instanceof Terminal){
                 sb.append(((Terminal) e).getId());
             }
             sb.append(" ");

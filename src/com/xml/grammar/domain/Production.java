@@ -8,6 +8,15 @@ public class Production {
 
     private NonTerminal lhs;
 
+    private int id;
+
+    private static int index = 0;
+
+    public Production(List<Element> elements) {
+        this.elements = elements;
+        this.id = index++;
+    }
+
     public NonTerminal getLhs() {
         return lhs;
     }
@@ -16,25 +25,9 @@ public class Production {
         this.lhs = lhs;
     }
 
-    private int id;
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    private static int index = 0;
-
-    public Production() {
-        id = index++;
-    }
-
-    public Production(List<Element> elements) {
-        this.elements = elements;
-        this.id = index++;
     }
 
     public List<Element> getElements() {

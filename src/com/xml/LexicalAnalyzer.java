@@ -23,11 +23,10 @@ public class LexicalAnalyzer {
     private int col = 0;
 
     private void initializeExtra() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("codification.txt"));
+        Scanner scanner = new Scanner(new File("codification.2txt"));
         while (scanner.hasNext()) {
             String s = scanner.nextLine();
             if (!s.equals("")) {
-                System.out.println(s);
                 List<String> tokens = Arrays.stream(s.split(" ")).collect(Collectors.toList());
                 codification.put(tokens.get(1), Integer.parseInt(tokens.get(0)));
             }
@@ -44,7 +43,6 @@ public class LexicalAnalyzer {
     }
 
     private void getCurrentToken() {
-        System.out.println(buffer);
         if (!buffer.isEmpty()) {
             if (codification.containsKey(buffer))
                 addToPif(codification.get(buffer), -1);
@@ -113,7 +111,7 @@ public class LexicalAnalyzer {
     }
 
     private boolean isConstant(String s) {
-        return s.matches("^[0-9]?$");
+        return s.matches("^[0-9]+$");
 
     }
 

@@ -66,7 +66,7 @@ public class State {
         StringBuilder sb = new StringBuilder();
         sb.append(id).append("->").append("{");
         for (ProductionIterator pi: productionIterators) {
-            sb.append("[").append(pi.toString()).append("], ");
+            sb.append("[").append(pi).append("], ");
         }
         sb.append("}");
         return sb.toString();

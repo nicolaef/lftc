@@ -1,5 +1,6 @@
-S A
-2 3 4
-S
-S->2 A
-A->3 A|4
+Expression Operator Identifier
+0 1 14 15 21
+Expression
+Operator->21
+Expression->14 Expression Operator Expression 15|Identifier
+Identifier->0|1
